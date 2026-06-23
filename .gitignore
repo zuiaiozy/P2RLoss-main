@@ -9,6 +9,7 @@ exp/
 # local sync snapshots/backups
 .server_sync/
 .local_backup_before_server_sync/
+server_exp_backup/
 # Local Python environments
 .venv/
 venv/
