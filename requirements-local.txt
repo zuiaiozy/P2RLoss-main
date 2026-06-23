@@ -1,0 +1,11 @@
+﻿# Lightweight local development dependencies.
+# This intentionally excludes torch/torchvision/timm/CUDA packages.
+# Use requirements.txt on the server for real training/evaluation.
+yacs
+numpy
+Pillow
+opencv-python
+tqdm
+scipy
+matplotlib
+termcolor

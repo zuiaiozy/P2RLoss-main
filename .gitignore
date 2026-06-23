@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# experiments
+exp/
+
+# local sync snapshots/backups
+.server_sync/
+.local_backup_before_server_sync/
+# Local Python environments
+.venv/
+venv/
+env/
+
+# Editor / local machine state
+.vscode/
+
+# Data, checkpoints, and generated artifacts
+data/
+*.pth
+*.pt
+*.ckpt
+*.log

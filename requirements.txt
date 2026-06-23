@@ -1,0 +1,11 @@
+torch>=1.8
+torchvision
+timm
+yacs
+numpy
+Pillow
+opencv-python
+tqdm
+scipy
+matplotlib
+termcolor
