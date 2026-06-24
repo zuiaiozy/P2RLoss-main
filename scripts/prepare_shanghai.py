@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import random
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 from scipy.io import loadmat
@@ -51,16 +52,44 @@ def convert_split(part_root: Path, split: str) -> int:
     return count
 
 
-def generate_protocols(part_root: Path, output_dir: Path, name: str, percents: list[int], seed: int) -> None:
+def read_protocol(protocol_path: Optional[Path]) -> list[str]:
+    if protocol_path is None:
+        return []
+    if not protocol_path.exists():
+        raise FileNotFoundError(protocol_path)
+    return [line.strip() for line in protocol_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def generate_protocols(
+    part_root: Path,
+    output_dir: Path,
+    name: str,
+    percents: list[int],
+    seed: int,
+    base_protocol: Optional[Path] = None,
+) -> None:
     image_dir = part_root / "train_data" / "images"
     images = sorted(p.name for p in image_dir.glob("*.jpg"))
     if not images:
         raise FileNotFoundError(f"No .jpg images found in {image_dir}")
 
+    base_images = read_protocol(base_protocol)
+    unknown_base = sorted(set(base_images) - set(images))
+    if unknown_base:
+        raise ValueError(f"Base protocol contains images not found in {image_dir}: {unknown_base[:5]}")
+
     rng = random.Random(seed)
-    for percent in percents:
+    base_set = set(base_images)
+    remaining = [image for image in images if image not in base_set]
+    rng.shuffle(remaining)
+
+    for percent in sorted(set(percents)):
         n_labeled = max(1, round(len(images) * percent / 100.0))
-        chosen = sorted(rng.sample(images, n_labeled))
+        if len(base_images) > n_labeled:
+            raise ValueError(
+                f"Base protocol has {len(base_images)} images, more than the {percent}% target {n_labeled}."
+            )
+        chosen = sorted(base_images + remaining[: n_labeled - len(base_images)])
         out_path = output_dir / f"{name}-{percent}.txt"
         out_path.write_text("\n".join(chosen) + "\n", encoding="utf-8")
         print(f"[protocol] {out_path}: {len(chosen)}/{len(images)} labeled images")
@@ -73,6 +102,12 @@ def main() -> None:
     parser.add_argument("--protocol-dir", default=Path("protocols"), type=Path)
     parser.add_argument("--percents", nargs="+", default=[5, 10, 40], type=int)
     parser.add_argument("--seed", default=2024, type=int)
+    parser.add_argument(
+        "--base-protocol",
+        default=None,
+        type=Path,
+        help="Optional protocol whose images must be included in every generated split.",
+    )
     parser.add_argument("--skip-anno", action="store_true", help="Only generate protocols.")
     args = parser.parse_args()
 
@@ -87,7 +122,7 @@ def main() -> None:
 
     protocol_dir = args.protocol_dir.resolve()
     protocol_dir.mkdir(parents=True, exist_ok=True)
-    generate_protocols(part_root, protocol_dir, args.name, args.percents, args.seed)
+    generate_protocols(part_root, protocol_dir, args.name, args.percents, args.seed, args.base_protocol)
 
 
 if __name__ == "__main__":
