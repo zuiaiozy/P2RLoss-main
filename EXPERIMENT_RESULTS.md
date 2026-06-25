@@ -10,7 +10,7 @@ first run; 10% and 40% should be rerun with the nested protocols.
 | Label | Protocol | Tag | Epochs | Best Epoch | Best MAE | Best MSE | Paper MAE | Paper MSE | Train Time | Notes |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
 | 5% | `protocols/sha-5.txt` | `sha-L5` | 1500 | 1280 | 72.841 | 124.598 | 69.9 | 119.5 | 4:12:54 | Base split, 15 labeled images. |
-| 10% | `protocols/sha-10.txt` | `sha-L10-nested` | 1500 | TBD | TBD | TBD | TBD | TBD | TBD | Nested split, 30 labeled images. |
+| 10% | `protocols/sha-10.txt` | `sha-L10` | 1500 | 750 | 65.308 | 113.567 | TBD | TBD | 5:29:48 | Nested split, 30 labeled images. |
 | 40% | `protocols/sha-40.txt` | `sha-L40-nested` | 1500 | TBD | TBD | TBD | TBD | TBD | TBD | Nested split, 120 labeled images. |
 
 ## 5% Run Details
@@ -22,6 +22,19 @@ first run; 10% and 40% should be rerun with the nested protocols.
 - Best validation line: `* MAE 72.841 MSE 124.598`
 - Best log line: `Min total MAE|MSE|Loss: 72.840659 | 124.598 | 4334.36`
 - The 5% labeled protocol contains 15 labeled images out of 300 training images.
+
+
+## 10% Run Details
+
+- Best checkpoint: `exp/sha-L10/output/ckpt_epoch_best.pth`
+- Latest checkpoint: `exp/sha-L10/output/ckpt_epoch_latest.pth`
+- Stage checkpoint: `exp/sha-L10/output/ckpt_epoch_stage2.pth`
+- Config: `exp/sha-L10/output/config.json`
+- Best MAE epoch: 750
+- Best validation line: `* MAE 65.308 MSE 113.567`
+- Best log line: `Min total MAE|MSE|Loss: 65.307692 | 113.57 | 3703.49`
+- Training time: 5:29:48
+- The 10% labeled protocol contains 30 labeled images out of 300 training images and includes all 15 images from the 5% protocol.
 
 ## Previous Non-Nested Runs
 
