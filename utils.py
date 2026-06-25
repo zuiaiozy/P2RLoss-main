@@ -26,16 +26,39 @@ def load_checkpoint(config, model, optimizer, lr_scheduler, logger):
     logger.info(f"[load teacher]: {msg_t}")
     msg_s = student.load_state_dict(checkpoint['student'], strict=False)
     logger.info(f"[load student]: {msg_s}")
-    max_accuracy = [1e6] * 3
+
+    if optimizer is not None and 'optimizer' in checkpoint:
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        logger.info("[load optimizer]: loaded")
+    if lr_scheduler is not None and 'lr_scheduler' in checkpoint:
+        lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
+        logger.info("[load lr_scheduler]: loaded")
+
+    if 'epoch' in checkpoint:
+        config.defrost()
+        config.TRAIN.START_EPOCH = checkpoint['epoch'] + 1
+        config.freeze()
+        logger.info(f"=> resume start epoch set to {config.TRAIN.START_EPOCH}")
+    else:
+        logger.warning("checkpoint has no epoch; model weights were loaded but training will start from START_EPOCH")
+
+    max_accuracy = checkpoint.get('max_accuracy', [1e6] * 3)
     return max_accuracy
 
-def save_checkpoint(config, epoch, model, max_accuracy, logger):
+
+def save_checkpoint(config, epoch, model, max_accuracy, logger, optimizer=None, lr_scheduler=None, filename=None):
     teacher, student = model
     save_state = {'teacher': teacher.state_dict(),
                   'student': student.state_dict(),
+                  'epoch': epoch if isinstance(epoch, int) else config.TRAIN.START_EPOCH,
                   'max_accuracy': max_accuracy
                 }
-    save_path = os.path.join(config.OUTPUT, f'ckpt_epoch_{epoch}.pth')
+    if optimizer is not None:
+        save_state['optimizer'] = optimizer.state_dict()
+    if lr_scheduler is not None:
+        save_state['lr_scheduler'] = lr_scheduler.state_dict()
+    save_name = filename if filename is not None else f'ckpt_epoch_{epoch}.pth'
+    save_path = os.path.join(config.OUTPUT, save_name)
     logger.info(f"{save_path} saving......")
     torch.save(save_state, save_path)
     logger.info(f"{save_path} saved !!!")
@@ -58,7 +81,11 @@ def auto_resume_helper(output_dir):
     checkpoints = os.listdir(output_dir)
     checkpoints = [ckpt for ckpt in checkpoints if ckpt.endswith('pth')]
     print(f"All checkpoints founded in {output_dir}: {checkpoints}")
-    if len(checkpoints) > 0:
+    latest_path = os.path.join(output_dir, 'ckpt_epoch_latest.pth')
+    if os.path.exists(latest_path):
+        print(f"The latest checkpoint founded: {latest_path}")
+        resume_file = latest_path
+    elif len(checkpoints) > 0:
         latest_checkpoint = max([os.path.join(output_dir, d) for d in checkpoints], key=os.path.getmtime)
         print(f"The latest checkpoint founded: {latest_checkpoint}")
         resume_file = latest_checkpoint

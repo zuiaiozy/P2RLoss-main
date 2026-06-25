@@ -121,7 +121,16 @@ def main_worker(config):
         train_one_epoch(config, [teacher, student], criterion, data_loader_train, optimizer, epoch)
 
         if epoch == STAGE_2 - 1:
-            save_checkpoint(config, "stage2", [teacher, student], max_accuracy, logger)
+            save_checkpoint(
+                config,
+                epoch,
+                [teacher, student],
+                max_accuracy,
+                logger,
+                optimizer=optimizer,
+                lr_scheduler=lr_scheduler,
+                filename="ckpt_epoch_stage2.pth",
+            )
 
         # if lr_scheduler is not None: lr_scheduler.step()
         
@@ -138,8 +147,27 @@ def main_worker(config):
             logger.info(f"Accuracy of the network on the test images: {loss:.6f}")
 
             if mae * 4 + mse < max_accuracy[0] * 4 + max_accuracy[1]:
-                save_checkpoint(config, "best", [teacher, student], max_accuracy, logger)
                 max_accuracy = (mae, mse, loss)
+                save_checkpoint(
+                    config,
+                    epoch,
+                    [teacher, student],
+                    max_accuracy,
+                    logger,
+                    optimizer=optimizer,
+                    lr_scheduler=lr_scheduler,
+                    filename="ckpt_epoch_best.pth",
+                )
+            save_checkpoint(
+                config,
+                epoch,
+                [teacher, student],
+                max_accuracy,
+                logger,
+                optimizer=optimizer,
+                lr_scheduler=lr_scheduler,
+                filename="ckpt_epoch_latest.pth",
+            )
             logger.info(f'Min total MAE|MSE|Loss: {max_accuracy[0]:.6f} | {max_accuracy[1]:.2f} | {max_accuracy[2] * 1e5:.2f}')
 
     total_time = time.time() - start_time
