@@ -9,7 +9,7 @@ first run; 10% and 40% should be rerun with the nested protocols.
 
 | Label | Protocol | Tag | Epochs | Best Epoch | Best MAE | Best MSE | Paper MAE | Paper MSE | Train Time | Notes |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
-| 5% | `protocols/sha-5.txt` | `sha-L5` | 1500 | 1280 | 72.84 | 124.60 | 69.9 | 119.5 | 4:12:54 | Base split, 15 labeled images. |
+| 5% | `protocols/sha-5.txt` | `sha-L5` | 1500 | 1280 | 72.841 | 124.598 | 69.9 | 119.5 | 4:12:54 | Base split, 15 labeled images. |
 | 10% | `protocols/sha-10.txt` | `sha-L10-nested` | 1500 | TBD | TBD | TBD | TBD | TBD | TBD | Nested split, 30 labeled images. |
 | 40% | `protocols/sha-40.txt` | `sha-L40-nested` | 1500 | TBD | TBD | TBD | TBD | TBD | TBD | Nested split, 120 labeled images. |
 
@@ -20,7 +20,7 @@ first run; 10% and 40% should be rerun with the nested protocols.
 - Config: `exp/sha-L5/output/config.json`
 - Best MAE epoch: 1280
 - Best validation line: `* MAE 72.841 MSE 124.598`
-- Best log line: `Min total MAE|MSE|Loss: 72.840659 | 124.60 | 4334.36`
+- Best log line: `Min total MAE|MSE|Loss: 72.840659 | 124.598 | 4334.36`
 - The 5% labeled protocol contains 15 labeled images out of 300 training images.
 
 ## Previous Non-Nested Runs
