@@ -12,6 +12,7 @@ first run; 10% and 40% should be rerun with the nested protocols.
 | 5% | `protocols/sha-5.txt` | `sha-L5` | 1500 | 1280 | 72.841 | 124.598 | 69.9 | 119.5 | 4:12:54 | Base split, 15 labeled images. |
 | 10% | `protocols/sha-10.txt` | `sha-L10` | 1500 | 750 | 65.308 | 113.567 | TBD | TBD | 5:29:48 | Nested split, 30 labeled images. |
 | 40% | `protocols/sha-40.txt` | `sha-L40-nested` | 1500 | 904 | 58.18 | 95.83 | TBD | TBD | TBD | Temporarily using interrupted epoch-904 result; replace after rerun. |
+| 100% | `protocols/sha-100.txt` | `sha-L100` | 1500 | TBD | TBD | TBD | TBD | TBD | TBD | Fully supervised run; pseudo-label branch disabled. |
 
 ## 5% Run Details
 

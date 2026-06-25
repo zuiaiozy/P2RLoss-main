@@ -195,7 +195,8 @@ def train_one_epoch(config, model, criterion, data_loader, optimizer, epoch):
         down_rate = limg.size(-1) // lden.size(-1)
         loss = criterion(lden, lseq, down_rate)
 
-        if epoch >= STAGE_2:
+        use_semi_supervision = config.DATA.LABEL_PERCENT < 1.0
+        if use_semi_supervision and epoch >= STAGE_2:
             wa_img = uimg[:, :3].cuda(non_blocking=True)
             sa_img = uimg[:, 3:].cuda(non_blocking=True)
             cut_img_mask = umasks.cuda(non_blocking=True)
