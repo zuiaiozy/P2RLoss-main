@@ -24,3 +24,8 @@ data/
 *.pt
 *.ckpt
 *.log
+
+# local datasets
+CQUPTClass_processed/
+CQUPTClass_p2r/
+CQUPTClass_processed.zip
